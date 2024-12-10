@@ -3,11 +3,16 @@
 # I think it's because of how I'm calculating the screen dimensions
 # I can see that when I print the parameters of the windows created, the width
 # compared to where they start are not correct
+
 # NOTE:
 # I've realized I should measure how many terminal cells fit into each
 # grid cell so that I can define the length and with of each window
 # with grid cells. This way I don't need to do dumb math and can just say
 # width: 3 cells, hight: 2 cells
+# Also, I can take the difference the maximum grid cells within the screen
+# and, if the difference is an even number, I can make it a magin value so
+# the windows are centered on the screen. This can avoid having a large gap
+# on the right and bottom sides of the screen
 
 
 import curses
