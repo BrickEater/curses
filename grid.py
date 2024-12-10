@@ -20,72 +20,82 @@ def grid(win, arr):
     for key, value in value_coordinates.items():
         square_dimensions[key] = [value[1][0] - value[0][0], value[1][1] - value[0][1]]
 
-    """
-    for something in something:
-        window_id = It would be easier to grab this at the beginning of the loop
-        start_location = I need this so I know where to put the window
-        window_height = I need to calculate this with a ratio of the grid length and the window length
-        window_width = Same thing with the width
-    """
+    for (key1, value1), (key2, value2) in zip(
+        value_coordinates.items(), square_dimensions.items()
+    ):
+        window_starting_location = (
+            maxy * (value1[0][0] * 100 // grid_length + 1) // 100,
+            maxx * (value1[0][1] * 100 // grid_length) // 100,
+        )
+        window_height = (maxy // grid_length) * value2[0]
+        window_width = (maxx // grid_width) * value2[1]
+        window = curses.newwin(
+            window_height,
+            window_width,
+            window_starting_location[0],
+            window_starting_location[1],
+        )
+        window.box()
+        windows.append(window)
 
-    window1_starting_location = (
-        maxy * value_coordinates[1][0][0],
-        maxx * value_coordinates[1][0][1],
-    )
-    window1_height = (maxy // grid_length) * square_dimensions[1][0]
-    window1_width = (maxx // grid_width) * square_dimensions[1][1]
-    win1 = curses.newwin(
-        window1_height,
-        window1_width,
-        window1_starting_location[0],
-        window1_starting_location[1],
-    )
-    win1.box()
-    windows.append(win1)
+    # window1_starting_location = (
+    #     maxy * (value_coordinates[1][0][0] * 100 // grid_length + 1) // 100,
+    #     maxx * (value_coordinates[1][0][1] * 100 // grid_width) // 100,
+    # )
+    # window1_height = (maxy // grid_length) * square_dimensions[1][0]
+    # window1_width = (maxx // grid_width) * square_dimensions[1][1]
+    # print(maxy, maxx)
+    # # print(square_dimensions[1][0], square_dimensions[1][1])
+    # print(f"height:{window1_height} width:{window1_width}")
+    # win1 = curses.newwin(
+    #     window1_height,
+    #     window1_width,
+    #     window1_starting_location[0],
+    #     window1_starting_location[1],
+    # )
+    # win1.box()
+    # windows.append(win1)
+    #
+    # window2_starting_location = (
+    #     maxy * (value_coordinates[2][0][0] * 100 // grid_length + 1) // 100,
+    #     maxx * (value_coordinates[2][0][1] * 100 // grid_width) // 100,
+    # )
+    # window2_height = (maxy // grid_length) * square_dimensions[2][0]
+    # window2_width = (maxx // grid_width) * square_dimensions[2][1]
+    # win2 = curses.newwin(
+    #     window2_height,
+    #     window2_width,
+    #     window2_starting_location[0],
+    #     window2_starting_location[1],
+    # )
+    # win2.box()
+    # windows.append(win2)
+    #
+    # window3_starting_location = (
+    #     maxy * (value_coordinates[3][0][0] * 100 // grid_length + 1) // 100,
+    #     maxx * (value_coordinates[3][0][1] * 100 // grid_width) // 100,
+    # )
+    # window3_height = (maxy // grid_length) * square_dimensions[3][0]
+    # window3_width = (maxx // grid_width) * square_dimensions[3][1]
+    # win3 = curses.newwin(
+    #     window3_height,
+    #     window3_width,
+    #     window3_starting_location[0],
+    #     window3_starting_location[1],
+    # )
+    # win3.box()
+    # windows.append(win3)
 
-    window2_starting_location = (
-        maxy * (value_coordinates[2][0][0] * 100 // grid_length) // 100,
-        maxx * (value_coordinates[2][0][1] * 100 // grid_width) // 100,
-    )
-    window2_height = (maxy // grid_length) * square_dimensions[2][0]
-    window2_width = (maxx // grid_width) * square_dimensions[2][1]
-    win2 = curses.newwin(
-        window2_height,
-        window2_width,
-        window2_starting_location[0],
-        window2_starting_location[1],
-    )
-    win2.box()
-    windows.append(win2)
-
-    window3_starting_location = (
-        maxy * (value_coordinates[3][0][0] * 100 // grid_length) // 100,
-        maxx * (value_coordinates[3][0][1] * 100 // grid_width) // 100,
-    )
-    window3_height = (maxy // grid_length) * square_dimensions[3][0]
-    window3_width = (maxx // grid_width) * square_dimensions[3][1]
-    win3 = curses.newwin(
-        window3_height,
-        window3_width,
-        window3_starting_location[0],
-        window3_starting_location[1],
-    )
-    win3.box()
-    windows.append(win3)
-
-    # for i in range(len(square_dimensions)):
-    #     win1 = win.subwin(5, 5, i * 6, 5)  # Example positioning of windows
-    #     win1.border()
-    #     windows.append(win1)  # Append each window to the list
-
-    return windows  # Return the list of windows
+    return windows
 
 
-array = [
-    [1, 1, 2],
-    [1, 1, 2],
-    [3, 3, 3],
-]
+# array = [
+#     [1, 1, 2],
+#     [1, 1, 2],
+#     [3, 3, 3],
+# ]
+# array = [[1], [2], [3]]
+array = [[1, 2]]
 
 
 screen = curses.initscr()
