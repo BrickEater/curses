@@ -38,69 +38,25 @@ def grid(win, arr):
         window.box()
         windows.append(window)
 
-    # window1_starting_location = (
-    #     maxy * (value_coordinates[1][0][0] * 100 // grid_length + 1) // 100,
-    #     maxx * (value_coordinates[1][0][1] * 100 // grid_width) // 100,
-    # )
-    # window1_height = (maxy // grid_length) * square_dimensions[1][0]
-    # window1_width = (maxx // grid_width) * square_dimensions[1][1]
-    # print(maxy, maxx)
-    # # print(square_dimensions[1][0], square_dimensions[1][1])
-    # print(f"height:{window1_height} width:{window1_width}")
-    # win1 = curses.newwin(
-    #     window1_height,
-    #     window1_width,
-    #     window1_starting_location[0],
-    #     window1_starting_location[1],
-    # )
-    # win1.box()
-    # windows.append(win1)
-    #
-    # window2_starting_location = (
-    #     maxy * (value_coordinates[2][0][0] * 100 // grid_length + 1) // 100,
-    #     maxx * (value_coordinates[2][0][1] * 100 // grid_width) // 100,
-    # )
-    # window2_height = (maxy // grid_length) * square_dimensions[2][0]
-    # window2_width = (maxx // grid_width) * square_dimensions[2][1]
-    # win2 = curses.newwin(
-    #     window2_height,
-    #     window2_width,
-    #     window2_starting_location[0],
-    #     window2_starting_location[1],
-    # )
-    # win2.box()
-    # windows.append(win2)
-    #
-    # window3_starting_location = (
-    #     maxy * (value_coordinates[3][0][0] * 100 // grid_length + 1) // 100,
-    #     maxx * (value_coordinates[3][0][1] * 100 // grid_width) // 100,
-    # )
-    # window3_height = (maxy // grid_length) * square_dimensions[3][0]
-    # window3_width = (maxx // grid_width) * square_dimensions[3][1]
-    # win3 = curses.newwin(
-    #     window3_height,
-    #     window3_width,
-    #     window3_starting_location[0],
-    #     window3_starting_location[1],
-    # )
-    # win3.box()
-    # windows.append(win3)
-
     return windows
 
 
-# array = [
-#     [1, 1, 2],
-#     [1, 1, 2],
-#     [3, 3, 3],
-# ]
+array = [
+    [1, 2, 2],
+    [1, 2, 2],
+    [3, 3, 3],
+]
 # array = [[1], [2], [3]]
-array = [[1, 2]]
+# array = [[1, 2, 3], [1, 2, 3]]
 
 
 screen = curses.initscr()
 
 windows = grid(screen, array)
+for i, win in enumerate(windows):
+    h, w = win.getmaxyx()  # Get height and width
+    y, x = win.getbegyx()  # Get starting position (y, x)
+    print(f"Window {i+1}: Height={h}, Width={w}, Position=({y}, {x})")
 
 for win in windows:
     win.refresh()
