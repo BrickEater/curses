@@ -36,6 +36,31 @@ import curses
 # the window id and create a window layout
 
 
+# Error Handling----------------------------------------------------------------
+def error_check_for_name_duplication():
+    pass
+
+
+def error_check_for_equal_array_lengths():
+    pass
+
+
+def error_check_for_correct_window_formatting():
+    pass
+
+
+# Utility Functions-------------------------------------------------------------
+def define_window_key_points():
+    pass
+
+
+def define_window_length_and_width():
+    pass
+
+
+# Main function-----------------------------------------------------------------
+
+
 def grid(win, arr, data=None):
     if data is None:
         data = {}
@@ -96,12 +121,12 @@ def grid(win, arr, data=None):
 # grid_layout = [[1, 2, 3, 4, 5, 6, 7, 8, 9]]
 # grid_layout = [[1, 2], [3, 4, 5]] # 5 is never rendered since it is off screen
 
-# grid_layout = [
-#     [1, 2, 2],
-#     [1, 2, 2],
-#     [1, 2, 2],
-#     [3, 3, 3],
-# ]
+grid_layout = [
+    [1, 2, 2],
+    [1, 2, 2],
+    [1, 2, 2],
+    [3, 3, 3],
+]
 # grid_layout = [[1], [2], [3]]
 # grid_layout = [
 #     [1, 2],
@@ -132,6 +157,3 @@ for win in windows.values():
 
 curses.napms(2000)
 curses.endwin()
-
-for win in windows.values():
-    print(win)
