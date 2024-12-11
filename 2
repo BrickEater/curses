@@ -1,19 +1,10 @@
-# TODO:
-# Still needs more debugging. I need to change everything to defensive programming.
-# There also seems to be an issue with passing more than 4 window to the function.
-# This is starting to become obvious that I need to use a debugger instead of printf
-# to find the issues. It's exhausting using printf to find the problems
-
-
 import curses
 
 # Take a 2d array as a grid where each object within the array represents
 # the window id and create a window layout
 
 
-def grid(win, arr, data=None):
-    if data is None:
-        data = {}
+def grid(win, arr, data):
     maxy, maxx = win.getmaxyx()
     grid_x = len(arr[0])
     grid_y = len(arr)
@@ -68,7 +59,7 @@ def grid(win, arr, data=None):
     return windows
 
 
-grid_layout = [[1, 2, 3, 4, 5]]
+grid_layout = [[1, 2, 2], [3, 3, 3]]
 
 # grid_layout = [
 #     [1, 2, 2],
@@ -85,8 +76,6 @@ window_names = {
     1: "main",
     2: "side",
     3: "footer",
-    4: "",
-    5: "",
 }
 
 
@@ -102,6 +91,3 @@ for win in windows.values():
 
 curses.napms(2000)
 curses.endwin()
-
-for win in windows.values():
-    print(win)
