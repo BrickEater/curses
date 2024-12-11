@@ -4,6 +4,31 @@
 # This is starting to become obvious that I need to use a debugger instead of printf
 # to find the issues. It's exhausting using printf to find the problems
 
+# TODO:
+# I need to write three different error handling functions
+# 1. check the window names dicionary for duplicate values
+# 2. check for list length continuity in the grid array
+# 3. check the grid array is formatted correctly. This requires all designations
+# of a window be touching eachother.
+
+# NOTE:
+# The technique used in Conway's Game of Life to check conditions can be used to check
+# for formatting of the grid array. It would be confirming neighboring cells are the same
+# window ID as the current cell but only for the second point added to value_coordinates
+
+# NOTE:
+# Seems like the bug is rooted in the window title. If there is no title the window doesn't
+# render correctly
+
+# NOTE:
+# Also, repeated names will also create issues rendering. I'd guess you can't have
+# values in dictionaries
+
+# NOTE:
+# No issue with string length, though. It just wraps like it typically would
+
+# NOTE:
+# It's only related to the duplicate dictionary entry
 
 import curses
 
@@ -68,7 +93,8 @@ def grid(win, arr, data=None):
     return windows
 
 
-grid_layout = [[1, 2, 3, 4, 5]]
+# grid_layout = [[1, 2, 3, 4, 5, 6, 7, 8, 9]]
+# grid_layout = [[1, 2], [3, 4, 5]] # 5 is never rendered since it is off screen
 
 # grid_layout = [
 #     [1, 2, 2],
@@ -85,8 +111,12 @@ window_names = {
     1: "main",
     2: "side",
     3: "footer",
-    4: "",
-    5: "",
+    4: "Goblin",
+    5: "Som",
+    6: "Worrrrrrrrr",
+    7: "Wo",
+    8: "Wod",
+    9: "",
 }
 
 
