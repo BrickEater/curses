@@ -1,38 +1,17 @@
-# TODO:
-# This is broken
-# I think it's because of how I'm calculating the screen dimensions
-# I can see that when I print the parameters of the windows created, the width
-# compared to where they start are not correct
-
-# NOTE:
-# I've realized I should measure how many terminal cells fit into each
-# grid cell so that I can define the length and with of each window
-# with grid cells. This way I don't need to do dumb math and can just say
-# width: 3 cells, hight: 2 cells
-# Also, I can take the difference the maximum grid cells within the screen
-# and, if the difference is an even number, I can make it a magin value so
-# the windows are centered on the screen. This can avoid having a large gap
-# on the right and bottom sides of the screen
-
-# NOTE:
-# I should also change the function to take a list/dictionary/array, whatever, with
-#  key value pairs of the window id and window name so the windows are created with
-# a name and are easier to refrense once created
-
-
 import curses
 
 # Take a 2d array as a grid where each object within the array represents
 # the window id and create a window layout
 
 
-def grid(win, arr):
+def grid(win, arr, data):
     maxy, maxx = win.getmaxyx()
-    grid_width = len(arr[0])
-    grid_length = len(arr)
+    grid_x = len(arr[0])
+    grid_y = len(arr)
+    grid_cell_size = (maxy // grid_y), (maxx // grid_x)
     value_coordinates = {}
     square_dimensions = {}
-    windows = []
+    windows = {}
 
     # Find the top left and bottom right points of each window on the grid
     # Itterates through the grid and stores the first point of a window
@@ -46,7 +25,6 @@ def grid(win, arr):
             else:
                 value_coordinates[value][1] = (y + 1, x + 1)
 
-    print(value_coordinates)
     # Calculate the shift between the first and last point of each rectangle and
     # store these values and the length and width of each window
     for key, value in value_coordinates.items():
@@ -55,54 +33,59 @@ def grid(win, arr):
     # Calculate the length and width of each grid cells in terminal cells
     # Define each window by the length and with of grid cells
     # Find the starting point to draw the windows
-    for (key1, value1), (key2, value2) in zip(
-        value_coordinates.items(), square_dimensions.items()
-    ):
+    for key in value_coordinates:
+        val_coor = value_coordinates[key]
+        sq_dim = square_dimensions[key]
+
         window_starting_location = (
-            maxy * (value1[0][0] * 100 // grid_length + 1) // 100,
-            maxx * (value1[0][1] * 100 // grid_length) // 100,
+            grid_cell_size[0] * val_coor[0][0],
+            grid_cell_size[1] * val_coor[0][1],
         )
-        window_height = (maxy // grid_length) * value2[0]
-        window_width = (maxx // grid_width) * value2[1]
-        window = curses.newwin(
+
+        window_height = grid_cell_size[0] * sq_dim[0]
+        window_width = grid_cell_size[1] * sq_dim[1]
+
+        new_window = curses.newwin(
             window_height,
             window_width,
             window_starting_location[0],
             window_starting_location[1],
         )
-        window.box()
-        windows.append(window)
+        new_window.box()
+        title = f" {data[key]} "
+        new_window.addstr(0, 1, title)
+        windows[data[key]] = new_window
 
     return windows
 
 
-array = [
+grid_layout = [
     [1, 2, 2],
     [1, 2, 2],
     [1, 2, 2],
     [3, 3, 3],
 ]
-# array = [[1], [2], [3]]
-# array = [
-#     [1, 1, 2],
-#     [1, 1, 2],
-#     [1, 1, 2],
-#     [3, 3, 3],
+# grid_layout = [[1], [2], [3]]
+# grid_layout = [
+#     [1, 2],
 # ]
+
+window_names = {
+    1: "main",
+    2: "side",
+    3: "footer",
+}
 
 
 screen = curses.initscr()
 
-windows = grid(screen, array)
+windows = grid(screen, grid_layout, window_names)
 
-for win in windows:
+for win in windows.values():
     win.refresh()
+
+windows["side"].addstr(1, 1, "testing")
+windows["side"].refresh()
 
 curses.napms(2000)
 curses.endwin()
-
-print(screen.getmaxyx())
-for i, win in enumerate(windows):
-    h, w = win.getmaxyx()  # Get height and width
-    y, x = win.getbegyx()  # Get starting position (y, x)
-    print(f"Window {i+1}: Height={h}, Width={w}, Position=({y}, {x})")
