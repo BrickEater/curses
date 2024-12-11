@@ -14,6 +14,11 @@
 # the windows are centered on the screen. This can avoid having a large gap
 # on the right and bottom sides of the screen
 
+# NOTE:
+# I should also change the function to take a list/dictionary/array, whatever, with
+#  key value pairs of the window id and window name so the windows are created with
+# a name and are easier to refrense once created
+
 
 import curses
 
