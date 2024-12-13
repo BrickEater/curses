@@ -1,52 +1,38 @@
 # TODO:
-# Still needs more debugging. I need to change everything to defensive programming.
-# There also seems to be an issue with passing more than 4 window to the function.
-# This is starting to become obvious that I need to use a debugger instead of printf
-# to find the issues. It's exhausting using printf to find the problems
-
-# TODO:
-# I need to write three different error handling functions
-# 1. check the window names dicionary for duplicate values
-# 2. check for list length continuity in the grid array
-# 3. check the grid array is formatted correctly. This requires all designations
+# Only one more error handling function to write but then I have to look at how
+# passing no window names works
+# - check the grid array is formatted correctly. This requires all designations
 # of a window be touching eachother.
-
-# NOTE:
-# The technique used in Conway's Game of Life to check conditions can be used to check
-# for formatting of the grid array. It would be confirming neighboring cells are the same
-# window ID as the current cell but only for the second point added to value_coordinates
-
-# NOTE:
-# Seems like the bug is rooted in the window title. If there is no title the window doesn't
-# render correctly
-
-# NOTE:
-# Also, repeated names will also create issues rendering. I'd guess you can't have
-# values in dictionaries
-
-# NOTE:
-# No issue with string length, though. It just wraps like it typically would
-
-# NOTE:
-# It's only related to the duplicate dictionary entry
-
-import curses
+# - debug function when no window names are passed to it
 
 # Take a 2d array as a grid where each object within the array represents
 # the window id and create a window layout
 
+import curses
+from curses import wrapper
+from typing import Optional, Dict, List
+
 
 # Error Handling----------------------------------------------------------------
-def error_check_for_name_duplication():
-    pass
+def error_check_for_name_duplication(window_names: Dict[int, str]):
+    names_list = list(window_names.values())
+    if len(names_list) != len(set(names_list)):
+        raise ValueError("Window names cannot be duplicated")
 
 
-def error_check_for_equal_array_lengths():
-    pass
+def error_check_for_equal_array_lengths(window_layout: List[List[int]]):
+    for rows in window_layout:
+        if len(rows) != len(window_layout[0]):
+            raise ValueError("All list lengths must be equal")
 
 
-def error_check_for_correct_window_formatting():
-    pass
+def error_check_for_correct_window_formatting(window_layout: List[List[int]]):
+    window_points = {}
+    for y, row in enumerate(window_layout):
+        for x, window_id in enumerate(row):
+            # print(f"ID at (y:{y}, x:{x}) {window_id}")
+            if window_id not in window_points:
+                window_points[window_id] = (y, x)
 
 
 # Utility Functions-------------------------------------------------------------
@@ -59,14 +45,22 @@ def define_window_length_and_width():
 
 
 # Main function-----------------------------------------------------------------
+def grid(
+    win: curses.window,
+    window_layout: List[List[int]],
+    window_names: Optional[Dict[int, str]] = None,
+) -> Dict[str, curses.window]:
+    if window_names:
+        error_check_for_name_duplication(window_names)
+    elif window_names is None:
+        window_names = {}
 
+    error_check_for_equal_array_lengths(window_layout)
+    error_check_for_correct_window_formatting(window_layout)
 
-def grid(win, arr, data=None):
-    if data is None:
-        data = {}
     maxy, maxx = win.getmaxyx()
-    grid_x = len(arr[0])
-    grid_y = len(arr)
+    grid_x = len(window_layout[0])
+    grid_y = len(window_layout)
     grid_cell_size = (maxy // grid_y), (maxx // grid_x)
     value_coordinates = {}
     square_dimensions = {}
@@ -76,9 +70,9 @@ def grid(win, arr, data=None):
     # Itterates through the grid and stores the first point of a window
     # store the last point of the window
     # this is to calculate the shift between the points and structure a rectangle
-    for y in range(len(arr)):
-        for x in range(len(arr[y])):
-            value = arr[y][x]
+    for y in range(len(window_layout)):
+        for x in range(len(window_layout[y])):
+            value = window_layout[y][x]
             if value not in value_coordinates:
                 value_coordinates[value] = [(y, x), (y + 1, x + 1)]
             else:
@@ -111,49 +105,44 @@ def grid(win, arr, data=None):
             window_starting_location[1],
         )
         new_window.box()
-        title = f" {data[key]} "
+        title = f" {window_names[key]} "
         new_window.addstr(0, 1, title)
-        windows[data[key]] = new_window
+        windows[window_names[key]] = new_window
 
     return windows
 
 
-# grid_layout = [[1, 2, 3, 4, 5, 6, 7, 8, 9]]
-# grid_layout = [[1, 2], [3, 4, 5]] # 5 is never rendered since it is off screen
-
+# Configuration-----------------------------------------------------------------
+screen = curses.initscr()
 grid_layout = [
     [1, 2, 2],
     [1, 2, 2],
     [1, 2, 2],
     [3, 3, 3],
 ]
-# grid_layout = [[1], [2], [3]]
-# grid_layout = [
-#     [1, 2],
-# ]
 
 window_names = {
     1: "main",
     2: "side",
     3: "footer",
-    4: "Goblin",
-    5: "Som",
-    6: "Worrrrrrrrr",
-    7: "Wo",
-    8: "Wod",
-    9: "",
+    4: "something",
 }
 
 
-screen = curses.initscr()
+# Main init---------------------------------------------------------------------
+def main(screen):
+    screen.clear()
 
-windows = grid(screen, grid_layout, window_names)
+    windows = grid(screen, grid_layout, window_names)
 
-for win in windows.values():
-    win.refresh()
+    for win in windows.values():
+        win.refresh()
 
-# windows["side"].addstr(1, 1, "testing")
-# windows["side"].refresh()
+    # windows["side"].addstr(1, 1, "testing")
+    # windows["side"].refresh()
 
-curses.napms(2000)
-curses.endwin()
+    screen.getch()
+    # curses.endwin()
+
+
+wrapper(main)
