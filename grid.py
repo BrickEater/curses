@@ -1,9 +1,10 @@
 # TODO:
-# I'm too tired to finish this
-# I need to fix the few errors but then this is mostly done
+# Write docstrings for each functino
+# Write comments explaining the why of each function
+# Add one more error handling function checking if the name dictinoary
+# is longer than the window layout dictionary.
+# That, or write some better code to not have to worry about that
 
-# Take a 2d array as a grid where each object within the array represents
-# the window id and create a window layout
 
 import curses
 from curses import wrapper
@@ -12,46 +13,63 @@ from typing import Optional, Dict, List, Tuple
 
 # Error Handling----------------------------------------------------------------
 def error_check_for_name_duplication(window_names: Dict[int, str]):
+    """
+    Validate that all window names are unique.
+
+    Args:
+        window_names (Dict[int, str]): A dictionary mapping window IDs (keys)
+        to their corresponding names (values).
+
+    Raises:
+        ValueError: If any names are duplicated in the dictionary.
+    """
     names_list = list(window_names.values())
     if len(names_list) != len(set(names_list)):
-        raise ValueError("Window names cannot be duplicated")
+        raise ValueError(
+            f"Duplicate window names found in 'window_names': {window_names}"
+        )
 
 
 def error_check_for_equal_array_lengths(window_layout: List[List[int]]):
+    """
+    Validate that all lists are of equal length.
+
+    Args:
+        window_layout (List[List[int]]): A list of lists, often referred to as a 2D array.
+
+    Raises:
+        ValueError: If any list is not of equal length to the other lists.
+    """
     for rows in window_layout:
         if len(rows) != len(window_layout[0]):
-            raise ValueError("All list lengths must be equal")
+            raise ValueError(
+                f"Irregular list length found in 'window_layout': {window_layout}"
+            )
 
 
 def error_check_for_correct_window_formatting(window_layout: List[List[int]]):
     coordinates = {}
     for y, row in enumerate(window_layout):
         for x, value in enumerate(row):
-            # If the value exists in coordinates
             if value in coordinates:
-                # Check adjacency of the current coordinate to any previous ones
                 adjacent_found = False
                 for prev_y, prev_x in coordinates[value]:
-                    # Check if the current coordinate is adjacent to any previous ones
                     if (abs(prev_y - y) == 1 and prev_x == x) or (
                         abs(prev_x - x) == 1 and prev_y == y
                     ):
                         adjacent_found = True
                         break
 
-                # If no adjacent coordinates found, raise an error
                 if not adjacent_found:
                     raise ValueError("Window IDs need to be adjacent to each other")
 
-                # Append the current coordinate to the list
                 coordinates[value].append((y, x))
             else:
-                # If it's the first occurrence, initialize with the current coordinate
                 coordinates[value] = [(y, x)]
 
 
 # Utility Functions-------------------------------------------------------------
-def define_window_key_points(window_layout: List[List[int]]) -> Dict[int, int]:
+def define_window_key_points(window_layout: List[List[int]]) -> Dict[int, Tuple]:
     value_coordinates = {}
     for y in range(len(window_layout)):
         for x in range(len(window_layout[y])):
@@ -64,8 +82,8 @@ def define_window_key_points(window_layout: List[List[int]]) -> Dict[int, int]:
 
 
 def define_window_length_and_width(
-    value_coordinates: Dict[int, Tuple[int, int]],
-) -> Dict[int, int]:
+    value_coordinates: Dict[int, Tuple],
+) -> Dict[int, Tuple]:
     square_dimensions = {}
     for key, value in value_coordinates.items():
         square_dimensions[key] = [value[1][0] - value[0][0], value[1][1] - value[0][1]]
@@ -94,19 +112,10 @@ def grid(
     square_dimensions = {}
     windows = {}
 
-    # Find the top left and bottom right points of each window on the grid
-    # Itterates through the grid and stores the first point of a window
-    # store the last point of the window
-    # this is to calculate the shift between the points and structure a rectangle
     value_coordinates = define_window_key_points(window_layout)
 
-    # Calculate the shift between the first and last point of each rectangle and
-    # store these values and the length and width of each window
     square_dimensions = define_window_length_and_width(value_coordinates)
 
-    # Calculate the length and width of each grid cells in terminal cells
-    # Define each window by the length and with of grid cells
-    # Find the starting point to draw the windows
     for key in value_coordinates:
         val_coor = value_coordinates[key]
         sq_dim = square_dimensions[key]
@@ -133,19 +142,37 @@ def grid(
     return windows
 
 
-# Configuration-----------------------------------------------------------------
+# Example Values----------------------------------------------------------------
 grid_layout = [
     [1, 2, 2],
     [1, 2, 2],
     [1, 2, 2],
     [3, 3, 3],
 ]
+# grid_layout = [[1]]
+# grid_layout = [
+#     [1, 2, 2],
+# ]
+# grid_layout = [
+#     [1, 2, 2],
+#     [3, 4, 4],
+# ]
+# grid_layout = [
+#     [1, 2, 3],
+#     [4, 5, 6],
+#     [7, 8, 9],
+# ]
 
 window_names = {
-    1: "main",
-    2: "side",
-    3: "footer",
-    4: "something",
+    1: "1",
+    2: "2",
+    3: "3",
+    4: "4",
+    5: "5",
+    6: "6",
+    7: "7",
+    8: "8",
+    9: "9",
 }
 
 
@@ -159,11 +186,7 @@ def main(screen):
     for win in windows.values():
         win.refresh()
 
-    # windows["side"].addstr(1, 1, "testing")
-    # windows["side"].refresh()
-
-    windows["main"].getch()
-    # curses.endwin()
+    windows["1"].getch()
 
 
 wrapper(main)
