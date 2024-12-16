@@ -1,11 +1,3 @@
-# TODO:
-# Write docstrings for each functino
-# Write comments explaining the why of each function
-# Add one more error handling function checking if the name dictinoary
-# is longer than the window layout dictionary.
-# That, or write some better code to not have to worry about that
-
-
 import curses
 from curses import wrapper
 from typing import Optional, Dict, List, Tuple
@@ -192,7 +184,6 @@ def grid(
             grid_cell_size[0] * corner_coordinates[0][0],
             grid_cell_size[1] * corner_coordinates[0][1],
         )
-        print(corner_coordinates[0][1])
 
         window_height = grid_cell_size[0] * win_dimensions[0]
         window_width = grid_cell_size[1] * win_dimensions[1]
